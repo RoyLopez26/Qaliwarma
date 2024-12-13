@@ -1,0 +1,17 @@
+quarkus:
+  jackson:
+    timezone: America/Lima
+
+  hibernate-orm:
+    database:
+      generation: none
+    physical-naming-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    log:
+      sql: true
+
+  datasource:
+    db-kind: postgresql
+    jdbc:
+      url: 'jdbc:postgresql://localhost:5432/bd-qaliwarma'
+    username: postgres
+    password: postgres
