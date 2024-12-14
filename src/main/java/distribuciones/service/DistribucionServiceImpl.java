@@ -47,7 +47,7 @@ public class DistribucionServiceImpl implements DistribucionService {
             distribucion.setEmpleadoId(distribucionRequest.empleadoId());
             distribucionRepository.persist(distribucion);
 
-            for (DistribucionRequest.DetalleDistribucionRequest detalleDistribucion : distribucionRequest.distribuciones()) {
+            for (DistribucionRequest.DetalleDistribucionRequest detalleDistribucion : distribucionRequest.detalle()) {
                 DetalleDistribucionEntity detalle = new DetalleDistribucionEntity();
                 detalle.setCantidad(detalleDistribucion.cantidad());
                 detalle.setProductoId(detalleDistribucion.productoId());
@@ -65,7 +65,7 @@ public class DistribucionServiceImpl implements DistribucionService {
     @Override
     public List<DistribucionResponse> lisatarDistribuciones() {
 
-        var distribuciones = distribucionRepository.find("estado != ?1", "INACTIVO").list();
+        var distribuciones = distribucionRepository.obtenerDistribuciones();
 
         var detalles = detalleDistribucionRepository.find("estado != ?1", "INACTIVO").list();
 
@@ -75,7 +75,7 @@ public class DistribucionServiceImpl implements DistribucionService {
 
         return distribuciones.stream().map(distribucion -> {
             List<DistribucionResponse.DetalleDistribucionRequest> detallesDistribucion = detalles.stream()
-                    .filter(detalle -> detalle.getDistribucionId().equals(distribucion.getDistribucionId()))
+                    .filter(detalle -> detalle.getDistribucionId().equals(distribucion[0]))
                     .map(detalle -> new DistribucionResponse.DetalleDistribucionRequest(
                             detalle.getDetalleDistribucionId(),
                             detalle.getCantidad(),
@@ -85,13 +85,15 @@ public class DistribucionServiceImpl implements DistribucionService {
                     .toList();
 
             return new DistribucionResponse(
-                    distribucion.getDistribucionId(),
-                    DATE_FORMAT.format(distribucion.getFechaDistribucion()),
-                    distribucion.getObservaciones(),
-                    distribucion.getEstadoEntrega(),
-                    distribucion.getEstado(),
-                    distribucion.getColegioId(),
-                    distribucion.getEmpleadoId(),
+                    (Integer) distribucion[0],
+                    DATE_FORMAT.format(distribucion[1]),
+                    (String) distribucion[2],
+                    (String) distribucion[3],
+                    (String) distribucion[4],
+                    (Integer) distribucion[5],
+                    (String) distribucion[6],
+                    (Integer) distribucion[7],
+                    (String) distribucion[8] + " " + (String) distribucion[9],
                     detallesDistribucion
             );
         }).toList();
@@ -100,12 +102,15 @@ public class DistribucionServiceImpl implements DistribucionService {
     @Override
     public DistribucionResponse obtenerDistribucionPorId(Integer distribucionId) {
 
-        DistribucionEntity distribucion = distribucionRepository.find("distribucionId", distribucionId).firstResult();
+        var distribucionGuardada = distribucionRepository.findById(distribucionId);
 
-        if (distribucion == null || "INACTIVO".equals(distribucion.getEstado())) {
+
+        if (distribucionGuardada == null || "INACTIVO".equals(distribucionGuardada.getEstado())) {
             log.error("Distribución con ID {} no encontrada", distribucionId);
             return null;
         }
+
+        var distribucion = distribucionRepository.obtenerDistribucionPorId(distribucionId);
 
         List<DetalleDistribucionEntity> detalles = detalleDistribucionRepository.find(
                 "distribucionId = ?1 AND estado != ?2", distribucionId, "INACTIVO"
@@ -126,13 +131,15 @@ public class DistribucionServiceImpl implements DistribucionService {
                 .toList();
 
         return new DistribucionResponse(
-                distribucion.getDistribucionId(),
-                DATE_FORMAT.format(distribucion.getFechaDistribucion()),
-                distribucion.getObservaciones(),
-                distribucion.getEstadoEntrega(),
-                distribucion.getEstado(),
-                distribucion.getColegioId(),
-                distribucion.getEmpleadoId(),
+                (Integer) distribucion[0],
+                DATE_FORMAT.format(distribucion[1]),
+                (String) distribucion[2],
+                (String) distribucion[3],
+                (String) distribucion[4],
+                (Integer) distribucion[5],
+                (String) distribucion[6],
+                (Integer) distribucion[7],
+                (String) distribucion[8] + " " + (String) distribucion[9],
                 detallesDistribucion
         );
     }

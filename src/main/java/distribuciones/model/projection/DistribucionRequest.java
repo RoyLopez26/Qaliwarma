@@ -11,7 +11,7 @@ public record DistribucionRequest(
         String estado,
         Integer colegioId,
         Integer empleadoId,
-        List<DetalleDistribucionRequest> distribuciones
+        List<DetalleDistribucionRequest> detalle
 ) {
     public record DetalleDistribucionRequest(
             Double cantidad,

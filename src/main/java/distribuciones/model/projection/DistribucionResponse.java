@@ -10,8 +10,10 @@ public record DistribucionResponse(
         String estadoEntrega,
         String estado,
         Integer colegioId,
+        String nombreColegio,
         Integer empleadoId,
-        List<DetalleDistribucionRequest> distribuciones
+        String nombreCompleto,
+        List<DetalleDistribucionRequest> detalle
 ) {
     public record DetalleDistribucionRequest(
             Integer detalleDistribucionId,
