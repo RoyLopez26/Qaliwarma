@@ -12,6 +12,6 @@ quarkus:
   datasource:
     db-kind: postgresql
     jdbc:
-      url: 'jdbc:postgresql://localhost:5432/bd-qaliwarma'
+      url: 'jdbc:postgresql://34.176.222.51:5432/qaliwarma'
     username: postgres
-    password: postgres
+    password: e|S&&gYp~S9?R@cH
